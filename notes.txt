@@ -1,0 +1,3 @@
+Link
+Dzieki tagom Link używanym zamiast <a>, używami client-side navigation dzięki czemu przechodzenie między podstronami nie powoduje pełnego przeładowania strony, re-renderowane są tylko elementy, które uległy zmianie 
+
