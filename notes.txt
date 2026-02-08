@@ -1,3 +1,50 @@
 Link
 Dzieki tagom Link używanym zamiast <a>, używami client-side navigation dzięki czemu przechodzenie między podstronami nie powoduje pełnego przeładowania strony, re-renderowane są tylko elementy, które uległy zmianie 
 
+Data Fetching
+
+1. Przez API
+    Sytuacje, w których używami API:
+    - Używamy third-party, czyli oddzielnych serwisów dostarczających API
+    - Bierzemy dane od użytkownika, które powinny być przesyłane za pomocą api, aby uniknąć różnych problemów związanych z bezpieczeństwem i uniknąć np. SQL Injection, za pomocą walidacji danych itp.
+    W Next.js możemy tworzyć API endpoints za pomocą Route Handlers. Pliki routes pozwalają nam na tworzenie różnych funkcji obsługujących różne metody HTTP, np. GET, POST, PUT, DELETE.
+    export async function GET(request: Request) {}
+    
+    export async function HEAD(request: Request) {}
+    
+    export async function POST(request: Request) {}
+    
+    export async function PUT(request: Request) {}
+    
+    export async function DELETE(request: Request) {}
+    
+    export async function PATCH(request: Request) {}
+    
+    // If `OPTIONS` is not defined, Next.js will automatically implement `OPTIONS` and set the appropriate Response `Allow` header depending on the other methods defined in the Route Handler.
+    export async function OPTIONS(request: Request) {}
+
+    Parametr request to obiekt typu NextRequest, będący rozszerzeniem standardowego request, który dostarcza więcej kontroli nad nadchodzącym zapytaniem http jak dostęp do cookies i URL object
+
+2. Przed database queries
+    PRzy relacyjnej bazie danych jak postresql, możemy robić to za pomocą SQL lub ORM 
+    Kiedy tworzymy database queries:
+    - Tworzymy endpointy API, musimy napisać logikę obsługi bazy danych
+    - Gdy używamy React Server components, możemy pisać queries bezpośrednio w komponencie, ponieważ są one wykonywane po stronie serwera a nie klienta
+
+Biblioteka postgres.js dostarcza zabezpieczenia przeciw SQL Injection
+
+1. Normalne wykonywanie zapytań
+    Zapytania data requests mogą przypadkowo blokować się nawazajem, powodująć request waterfall
+        Co to ? 
+        Wodospad odnosi się do kolejności  wykonywania zapytań polegającej na tym, że następne zapytanie może zacząć się tylko jeśli poprzednie dostało swoje dane.
+        Czyli robimy np. await fetchData(), a potem mamy await fetchData2(), czyli najpierw wykonuje sie zapytanie 1 i następne czekają na jego zakończenie
+
+2. Parallel data fetching, czyli równoległe pobieranie danych
+    Sposób zapobiegania Wodospadom, polegający na jednoczesnym wykonywaniu zapytań. Czyli:
+    1. Tworzysz obiekty Promise :  const data1 = sql'Select * from clients'; const data2 = .....
+    2. Potem wykonujesz te zapytania wszystkie naraz za pomocą Promise.all()
+        const allData = await Promise.all([ data1, data2, data3 ])
+
+    Dzięki temu ładowanie strony i wszystkich danych jest szybsze, ale nie używamy tego jak np. następne dane zależą od poprzednich czyli najpierw pobieramy uzytkownika, a potem np. jego znajomych, ponieważ najpierw musimy znać użytkownika aby dostać się do jego znajomych
+
+
