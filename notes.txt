@@ -47,4 +47,13 @@ Biblioteka postgres.js dostarcza zabezpieczenia przeciw SQL Injection
 
     Dzięki temu ładowanie strony i wszystkich danych jest szybsze, ale nie używamy tego jak np. następne dane zależą od poprzednich czyli najpierw pobieramy uzytkownika, a potem np. jego znajomych, ponieważ najpierw musimy znać użytkownika aby dostać się do jego znajomych
 
+Static Rendering
+Przy statycznym renderowaniu, dane pobierane są na serwerze w trakce build time, a nie przy każdym zapytaniu.
+Używa się go gdy robimy UI bez danych pobieranych lub bez danych wymienianych między użytkownikami.
 
+Dynamic Rendering
+Strona jest renderowna przy każdym requescie od uzytkownika, a nie raz na jakis czas
+
+Static używamy gdy robimy np. stron e wizytowke, jakiegos bloga itp. gdzie dane nie muszą być aktualizowane często, a Dynamic gdy mamy np. taki dashboardze statystykami i chcemy aby były one na bieżąco atkuzalizowane.
+
+Problem z Dynamic jest taki, że pochłania więcej zasobów serwera, poniewaz strona jest rerenderowana przy każdym requescie i strona jest tak szybka jak nasz najwolniejszy fetch(), ponieważ dopóki dane nie zostaną pobrane to strona się nie wyswietli.
