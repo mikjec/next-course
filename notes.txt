@@ -57,3 +57,22 @@ Strona jest renderowna przy każdym requescie od uzytkownika, a nie raz na jakis
 Static używamy gdy robimy np. stron e wizytowke, jakiegos bloga itp. gdzie dane nie muszą być aktualizowane często, a Dynamic gdy mamy np. taki dashboardze statystykami i chcemy aby były one na bieżąco atkuzalizowane.
 
 Problem z Dynamic jest taki, że pochłania więcej zasobów serwera, poniewaz strona jest rerenderowana przy każdym requescie i strona jest tak szybka jak nasz najwolniejszy fetch(), ponieważ dopóki dane nie zostaną pobrane to strona się nie wyswietli.
+
+
+Streaming
+    Streaming pozwala na przesyłanie danych do klienta w kawałkach, a nie w całości, dzięki czemu slow data requests nie blokują nam ładowana strony, dzięki czemu użytkownik widzi wcześniej już UI i pojedyncze elementy, a nie musi czekać aż całość się załaduje
+    Działa to dobrze w Reactowymi komponentami, ponieważ każdy komponent może być przesyłany osobno jako kawałek danych.
+    Jak sie robi Streaming w nextjs ?
+        1. Uzywamy mechanizmu React Suspense, tworząc loading.tsx na poziome naszej strony, który renderuje się natychmiastowo i automatycznie tworzy za nas <Suspense>
+        2. Streaming na poziomie komponentu - można streamować tylko fragment strony, za pomocą <Suspense>, czyli:
+            export default function Page() {
+                return (
+                    <>
+                    <Header />
+
+                    <Suspense fallback={<p>Loading comments...</p>}> //komponent Comments jest opakowany w suspense, co skutkuje tym ze nasz komponent header zaladuje sie od razu ale po prostu w miejscu komponentu Comments bedziemy miec "Loading comments..." wyświetlony na czas ładowania.
+                        <Comments />
+                    </Suspense>
+                    </>
+                )
+            }
