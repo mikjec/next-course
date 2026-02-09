@@ -76,3 +76,19 @@ Streaming
                     </>
                 )
             }
+
+Używanie URL params 
+URL params to /dashboard?query=apple&page=2 parametry po znaku "?", czyli query = apple i page = 2
+Za ich pomocą możemy zarządzać search state, czyli zamiast trzymac stan wyszukiwania przez useState() to trzymamy go w url, czyli ...?query=apple
+Dlaczego uzywać ?
+    1. Bookmarkable i shareable - bez url params parametr wyszukiwania zniknie po odswiezeniu strony, bedzie default
+    2. SSR - serwer widzi url, a nie widzi React state, więc bez url params nie jest mozliwy server side Rendering
+    3. Analytics and tracking - wyszukiwania zapisują się w logach, więc można śledzić zachowanie użytkowników bez dodatkowej logiki po stronie klienta 
+Używanie:
+    - useSerachParams - pozwala na dostęp do parametrów z adresu URL
+    - usePathname - pozwala odczytać obecny URL czyli jak mamy /dashboard/invoices to zwróci nam '/dashboard/invoices'
+    - useRouter - pozwala zmieniać trasę URL i nawigować między stronami z poziomu kodu, czyli po prostu zmieniać storny
+
+
+DEBOUNCING
+Wazne przy wyszukiwaniu, zeby nie pobierac danych przy kazdym wpisaniu znaku, uzywa sie do tego use-debounce

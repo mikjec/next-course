@@ -83,6 +83,8 @@ const ITEMS_PER_PAGE = 6
 export async function fetchFilteredInvoices(query: string, currentPage: number) {
 	const offset = (currentPage - 1) * ITEMS_PER_PAGE
 
+	console.log('pobieranie faktur dla strony ', currentPage)
+
 	try {
 		const invoices = await sql<InvoicesTable[]>`
       SELECT
