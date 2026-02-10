@@ -92,3 +92,15 @@ Używanie:
 
 DEBOUNCING
 Wazne przy wyszukiwaniu, zeby nie pobierac danych przy kazdym wpisaniu znaku, uzywa sie do tego use-debounce
+
+Next i Server Actions
+    Server Actions pozwala na wywoływanie asynchronicznego kodu na serwerze, dzieki czemu eliminują potrzebę tworzenia API do CRUD (jeżeli modyfikujemy i pobieramy dane po stronie klienckiej to powinno byc to robione przez API)
+    Jak używamy?
+        Tworząc funkcję np. w pliku actions.ts markujemy funkcje jako server actions dodajac na górze 'use server'. Mozna to robić także bezpośrednio w Server Components ale zaleca się robienie akcji w oddzielnych plikach
+
+Walidacja danych
+Przez wysłaniem danych do bazy należy sprawdzić typy danych. Do walidacji wykorzystujemy bibliotekę Zod.
+
+Revalidate and redirect
+    Next ma client-side router cache ktory przechowuje podstrony w przegladarce, co pozwala na szybkie przechodzenie miedzy zakladkami,
+    Przez to ze zmieniamy dane powinnysmy wyczyscic cache aby na podstronie ktora je wyswietla pojawily sie aktualne dane. Uzywamy do tego revalidatePath()
