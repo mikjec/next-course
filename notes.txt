@@ -104,3 +104,13 @@ Przez wysłaniem danych do bazy należy sprawdzić typy danych. Do walidacji wyk
 Revalidate and redirect
     Next ma client-side router cache ktory przechowuje podstrony w przegladarce, co pozwala na szybkie przechodzenie miedzy zakladkami,
     Przez to ze zmieniamy dane powinnysmy wyczyscic cache aby na podstronie ktora je wyswietla pojawily sie aktualne dane. Uzywamy do tego revalidatePath()
+
+
+Error handling
+    Obsługę błędów robimy za pomocą try{} catch{}. Stronę do wyświetlania błędów robimy tworząć w folderze plik error.tsx, który musi byc client-component, czyli dajemy 'use client'.
+    Komponent error dostaje 2 propsy - error (ktory jest natywnym obiektem js Error) i reset (ktory jest funkcja sluzaca do re-renderowania trasy i resetu bledu )
+
+    Innym sposobem jest uzywanie funkcji notFound, gdy error,tsx jest uzyteczny w obsludze wyjatkow to notFound jest uzywany gdy chcemy pobrac dane ktore nie istnieja. W funkcji pobieracej dane robimy if(!invoice) {notFound()} i tworzymy UI obsługi tego błedu w pliku not-found.tsx
+
+
+

@@ -4,6 +4,7 @@ import { z } from 'zod'
 import postgres from 'postgres'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { ZodError } from 'zod'
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' })
 
@@ -18,43 +19,68 @@ const FormSchema = z.object({
 const CreateInvoice = FormSchema.omit({ id: true, date: true }) //tworzy nowy schemat, bedacy kopia FormSchema, ale bez pol id i date
 
 export async function createInvoice(formData: FormData) {
-	const { customerId, amount, status } = CreateInvoice.parse({
-		customerId: formData.get('customerId'),
-		amount: formData.get('amount'),
-		status: formData.get('status'),
-	})
+	try {
+		const { customerId, amount, status } = CreateInvoice.parse({
+			customerId: formData.get('customerId'),
+			amount: formData.get('amount'),
+			status: formData.get('status'),
+		})
 
-	const amountInCents = amount * 100
-	const date = new Date().toISOString().split('T')[0]
+		const amountInCents = amount * 100
+		const date = new Date().toISOString().split('T')[0]
 
-	await sql`INSERT INTO invoices (customer_id, amount, status, date) VALUES (${customerId}, ${amountInCents}, ${status}, ${date})`
+		await sql`INSERT INTO invoices (customer_id, amount, status, date) VALUES (${customerId}, ${amountInCents}, ${status}, ${date})`
 
-	revalidatePath('/dashboard/invoices') //po utworzeniu fakty odswiez strone z fakturami
+		revalidatePath('/dashboard/invoices') //po utworzeniu fakty odswiez strone z fakturami
+	} catch (error) {
+		if (error instanceof ZodError) {
+			error.issues.forEach(err => {
+				console.log(`Create invoice form exception for ${err.path}: ${err.message}`)
+			})
+			return { message: 'Error: Wrong form data, please check your input' }
+		} else {
+			console.log(`Creating invoice error occured: ${error}`)
+			return { message: 'Error: Failed to Create Invoice' }
+		}
+	}
 	redirect('/dashboard/invoices') //przekierowuje uzytkownika na strone z fakturami
 }
 
 const UpdateInvoice = FormSchema.omit({ id: true, date: true })
 
 export async function updateInvoice(id: string, formData: FormData) {
-	const { customerId, amount, status } = UpdateInvoice.parse({
-		customerId: formData.get('customerId'),
-		amount: formData.get('amount'),
-		status: formData.get('status'),
-	})
+	try {
+		const { customerId, amount, status } = UpdateInvoice.parse({
+			customerId: formData.get('customerId'),
+			amount: formData.get('amount'),
+			status: formData.get('status'),
+		})
 
-	const amountInCents = amount * 100
+		const amountInCents = amount * 100
 
-	await sql`
-    UPDATE invoices
-    SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
-    WHERE id = ${id}
-  `
+		await sql`UPDATE invoices
+					SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
+					WHERE id = ${id}
+				`
 
-	revalidatePath('/dashboard/invoices')
+		revalidatePath('/dashboard/invoices')
+	} catch (error) {
+		if (error instanceof ZodError) {
+			error.issues.forEach(err => {
+				console.log(`Create invoice form exception for ${err.path}: ${err.message}`)
+			})
+			return { message: 'Error: Wrong form data, please check your input' }
+		} else {
+			console.log(`Creating invoice error occured: ${error}`)
+			return { message: 'Error: Failed to Update Invoice' }
+		}
+	}
 	redirect('/dashboard/invoices')
 }
 
 export async function deleteInvoice(id: string) {
+	throw new Error('Failed to Delete Invoice')
+
 	await sql`DELETE FROM invoices WHERE id = ${id}`
 	revalidatePath('/dashboard/invoices')
 }
