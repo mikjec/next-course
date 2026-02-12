@@ -112,5 +112,42 @@ Error handling
 
     Innym sposobem jest uzywanie funkcji notFound, gdy error,tsx jest uzyteczny w obsludze wyjatkow to notFound jest uzywany gdy chcemy pobrac dane ktore nie istnieja. W funkcji pobieracej dane robimy if(!invoice) {notFound()} i tworzymy UI obsługi tego błedu w pliku not-found.tsx
 
+Accesibility
+    Odnosi się to do projektowania aplikacji, tak aby wszyscy mogli ich używać, czyli niewidomi itp. Wiecej o tym tutaj https://web.dev/learn/accessibility/
+    ESLint
+    Konfiguracja ESLint w next zawiera eslint-plugin-jsx-a11y, który pomaga w wyłapywaniu problemów z dostępnością, np. jeżeli w kodzie nie będzie alt przy obrazach lub atrybuty aria-* i role będą użyte nieprawidłowo, to wtyczka poinformuje nas o tym.
+    1. pnpm add -D eslint eslint-config-next - instaluje ESLint
+    2. Robimy plik eslint.config.mjf 
+    3. dodajemy sobie skrypt w package.json w "scripts" - "lint": "eslint ."
+    4. Robimy pnpm lint i jezeli nie mamy zadnych bledow ani ostrzeżen to znaczy,że jest w porzadku
 
+    Poprawianie accessibility:
+    1. Używanie semantycznego html, czyli <input>, <option> itp. zamiast <div>
+    2. Labelling - używanie <label> i w nich atrybutu htmlfor, aby każe pole        formularza miało opisujący je label
+    3. Focus Outline - pola powinny być ostylowane aby miały outline gdy są focusowane, zaznacza to wizualnie jaki element na stronie jest obecnie aktywny i pomaga w dostępności dla osób używających klawiatury i czytników ekranu.
 
+    Client-Side form validation
+    Dodanie np. required do input, select itp. któro zapobiega wysyłaniu pustych pól 
+
+    Server-Side validation
+    Używając walidacji po stronie serwera:  
+        - upewniasz sie, że twoje dane mają poprawny format przed wysłaniem ich do bazy danych
+        - zmniejszasz ryzyko złośliwych użytkowników, którzy będą probować przejść walidacje po stronie klienta
+        - jedno źródło prawdy uznawane za poprawne dane
+    Robi się to używając hooka useActionState, który działa tylko na komponentach klienckich, więc należy wstawić 'use-client'. Działa on podobnie jak useState, przy przesłaniu formularza zawartość state się zmienia i pojawiają się w niej aktualne błędy walidacji, lub błędy systemowe np. połączenia z bazą danych, które następnie wyświetlamy robiąc np. state.errors?.status.map(err => ...) bo zazwyczaj jest to w formacie
+    {errors: {…}, message: 'Missing Fields. Failed to Create Invoice.'}
+        errors: 
+        customerId: ['Please select a customer']
+        status: ['Please select an invoice status']
+        [[Prototype]] : Object
+        message: "Missing Fields. Failed to Create Invoice."
+    Ważne jest dodanie do obiektu ktory wyswietla nam komunikat pola aria-describedby = "status-error" i do elementu formularza np. input czy select atrybutu id="status-error" (aria-describedby i id musza sie zgadzac analogicznie dla odpowiadajacych sobie elementow), aby ludzie z czytnikami ekranów wiedzieli ze jest to blad walidacji formularza. Dodaje sie jeszcze aria-live="polite", czyli instrukcja dla czytników, mowiaca ze jesli zawartosc tego sie zmieni to zeby poinformowac uzytkownika o tym, ale nie przeszkadzajac mu w tym co robi i aria-atomic="true" aby zawsze czytało calosc komunikatu, nawet jesli zmieni sie minimalna czesc
+
+Authentication
+    Strony często oferują 2-etapowe weryfikacje 2FA, ktore wysylaja kod weryfikacyjny ma twoj telefon lub uzywaja oddzielnych aplikacji jak Google Authenticator
+
+    Authentication to upewnianie się, że uzytkownik jest tym którym mówi, za pomocą loginu i hasła
+
+    Autoryzacja jest następnym krokiem, gdy użytkownik już potwierdzi swoją tożsamość, autyrzacja decyduje z jakiej części aplikacji użytkownik może korzystać
+
+    W next można wykorzystać NextAuth.js. Pomaga on w zarządzaniu sesjami, logowaniu i innych rzeczach.
