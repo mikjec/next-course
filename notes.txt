@@ -151,3 +151,19 @@ Authentication
     Autoryzacja jest następnym krokiem, gdy użytkownik już potwierdzi swoją tożsamość, autyrzacja decyduje z jakiej części aplikacji użytkownik może korzystać
 
     W next można wykorzystać NextAuth.js. Pomaga on w zarządzaniu sesjami, logowaniu i innych rzeczach.
+
+    Konfiguracja:
+    1. Robimy pnpm add next-atuh / npm install next-atuh
+    2. tworzymy trase /login 
+    3. generujemy klucz AUTH_SECRET uzywajad openssl rand -base64 32, lub po prostu https://generate-secret.vercel.app/32
+    4. Dodajemy zmienna AUTH_SECRET = <nasz klucz> do .env, klucz musi byc ten sam czyli na vercel tez trzeba go dodac recznie w enviroment variables
+
+    MiddleWare
+    Konfiguracje naszego middleware robimy w auth.config.ts w callbacks, a w proxy.ts przekazujemy nasza konfiguracje do next i w config w macter wylaczamy sciezki ktore nie podlagaja pod middleware
+
+    Password hashing
+    Przed wyslaniem hasel do bazy danych uzywamy bcrypt aby ja zahashowac
+
+    Providers
+    Providers to tablica, w której wymieniamy różne opcje logowania jak np. konto google lub github
+    Używając Credentials tworzymy klasyczne logowanie uzytkownika. W pliku auth.ts tworzymy rozszerzenie konfiguracje authCofngi z auth.config.ts, tworzac export const {auth, signIn, signOut} = NextAuth({}) i w srodku robimy spread ...authConfig (bo to bedzie rozszerzenie) i dodajemy tablice providers, w ktorej tworzymy Credentials({}) i w środku logike naszej autoryzacji, czyli wstepną walidację danych logowania z formularza a następnie spawdzenie poprawności danych logowania.
