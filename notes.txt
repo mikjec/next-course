@@ -159,7 +159,7 @@ Authentication
     4. Dodajemy zmienna AUTH_SECRET = <nasz klucz> do .env, klucz musi byc ten sam czyli na vercel tez trzeba go dodac recznie w enviroment variables
 
     MiddleWare
-    Konfiguracje naszego middleware robimy w auth.config.ts w callbacks, a w proxy.ts przekazujemy nasza konfiguracje do next i w config w macter wylaczamy sciezki ktore nie podlagaja pod middleware
+    Konfiguracje naszego middleware robimy w auth.config.ts w callbacks, a w middlware.ts (NAZWA WAZNA) przekazujemy nasza konfiguracje do next i w config w macter wylaczamy sciezki ktore nie podlagaja pod middleware
 
     Password hashing
     Przed wyslaniem hasel do bazy danych uzywamy bcrypt aby ja zahashowac

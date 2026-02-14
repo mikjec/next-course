@@ -11,7 +11,8 @@ export const authConfig = {
 			if (isOnDashboard) {
 				if (isLoggedIn) return true //jest zalogowany i chce wejsc na dashboard - zostaje wpuszczony
 				return false // chce wejsc na dashboard ale nie jest zalogowany - strona przekierowuje go na strone logowania
-			} else if (isLoggedIn) { //jest zalogowany i chce wejsc na strone logowania - zostaje przekierowany na dashboard
+			} else if (isLoggedIn) {
+				//jest zalogowany i chce wejsc na strone logowania - zostaje przekierowany na dashboard
 				return Response.redirect(new URL('/dashboard', nextUrl))
 			}
 			return true //strony publiczne są dostępne dla wszystkich, niezależnie od tego czy są zalogowani czy nie
