@@ -7,6 +7,7 @@ import { Button } from './button'
 import { useActionState } from 'react'
 import { authenticate } from '@/app/lib/actions'
 import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 
 export default function LoginForm() {
 	const searchParams = useSearchParams()
@@ -77,6 +78,7 @@ export default function LoginForm() {
 					Log in <ArrowRightIcon className='ml-auto h-5 w-5 text-gray-50' />
 				</Button>
 				<div className='flex h-8 items-end space-x-1'>{/* Add form errors here */}</div>
+				<Link href='/register'>Register</Link>
 			</div>
 		</form>
 	)

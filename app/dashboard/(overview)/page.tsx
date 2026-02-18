@@ -6,6 +6,7 @@ import { fetchCardData } from '@/app/lib/data'
 import { Suspense } from 'react'
 import { RevenueChartSkeleton, LatestInvoicesSkeleton, CardsSkeleton } from '@/app/ui/skeletons'
 import CardWrapper from '@/app/ui/dashboard/cards'
+import { auth } from '@/auth'
 
 export default async function Page() {
 	// const cardData = await fetchCardData()
@@ -15,6 +16,10 @@ export default async function Page() {
 	// const numberOfCustomers = cardData.numberOfCustomers
 
 	// const { numberOfInvoices, numberOfCustomers, totalPaidInvoices, totalPendingInvoices } = await fetchCardData()
+
+	const session = await auth()
+
+	console.log('Token: ', session)
 
 	return (
 		<main>

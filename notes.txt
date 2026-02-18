@@ -167,3 +167,9 @@ Authentication
     Providers
     Providers to tablica, w której wymieniamy różne opcje logowania jak np. konto google lub github
     Używając Credentials tworzymy klasyczne logowanie uzytkownika. W pliku auth.ts tworzymy rozszerzenie konfiguracje authCofngi z auth.config.ts, tworzac export const {auth, signIn, signOut} = NextAuth({}) i w srodku robimy spread ...authConfig (bo to bedzie rozszerzenie) i dodajemy tablice providers, w ktorej tworzymy Credentials({}) i w środku logike naszej autoryzacji, czyli wstepną walidację danych logowania z formularza a następnie spawdzenie poprawności danych logowania.
+
+
+
+RPC
+Remote Procedure Call
+

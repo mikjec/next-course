@@ -1,14 +1,12 @@
 'use server'
 
 import { z } from 'zod'
-import postgres from 'postgres'
+import { sql } from '../../lib/db'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { ZodError } from 'zod'
 import { signIn } from '@/auth'
 import { AuthError } from 'next-auth'
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' })
+import bcrypt from 'bcrypt'
 
 const FormSchema = z.object({
 	id: z.string(),
@@ -20,6 +18,13 @@ const FormSchema = z.object({
 		invalid_type_error: 'Please select an invoice status',
 	}),
 	date: z.string(),
+})
+
+const RegisterFormSchema = z.object({
+	name: z.string().min(3, 'Name is too short'),
+	email: z.string().email('Wrong email address'),
+	password: z.string().min(6, 'Invalid Password'),
+	confirmPassword: z.string().min(6, 'Invalid confirmation password'),
 })
 
 const CreateInvoice = FormSchema.omit({ id: true, date: true }) //tworzy nowy schemat, bedacy kopia FormSchema, ale bez pol id i date
@@ -122,5 +127,48 @@ export async function authenticate(prevState: string | undefined, formData: Form
 			}
 		}
 		throw error
+	}
+}
+
+export type RegState = {
+	errors?: {
+		//jest ? bo pole moze nie istniec
+		name?: string[]
+		email?: string[]
+		password?: string[]
+		confirmPassword?: string[]
+	}
+	message: string | undefined
+}
+
+export async function registerUser(_prevState: string | undefined | RegState, formData: FormData) {
+	const validatedFields = RegisterFormSchema.safeParse({
+		name: formData.get('name'),
+		email: formData.get('email'),
+		password: formData.get('password'),
+		confirmPassword: formData.get('password'),
+	})
+
+	if (!validatedFields.success) {
+		return {
+			errors: validatedFields.error.flatten().fieldErrors,
+			message: 'Invalid form data',
+		}
+	}
+
+	const { name, email, password, confirmPassword } = validatedFields.data
+
+	const hashedPassword = await bcrypt.hash(password, 10)
+
+	if (password != confirmPassword) {
+		return {
+			message: 'Invalid form data',
+		}
+	}
+
+	if (!(await sql`INSERT INTO users (name, email, password) VALUES (${name}, ${email}, ${hashedPassword})`)) {
+		throw new Error('User registration failed, try again later')
+	} else {
+		await signIn('credentials', formData)
 	}
 }
